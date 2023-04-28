@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>FreightWise Programming Test</title>
+
+    <script>
+        'use strict';
+
+        /**
+         * Software Developer test.
+         *
+         * Doing research and making API calls are an important part of what we do at FreightWise.  This test will
+         * demonstrate your abilities to:
+         *
+         * - Make an API call
+         * - Research an API
+         * - Do basic DOM manipulation
+         * - Parse data
+         * - Handle errors
+         * - Be creative
+         *
+         * Feel free to ask any questions you may have.  Use a lot of comments, and explain why you are doing things.
+         * Don't spend more than 1-2 hours on it - we aren't expecting a finished product, but it should work and look
+         * nice.  Feel free to use any third party libraries, and if you do so, explain why you used them instead of
+         * built in browser APIs.
+         *
+         * Instructions:
+         * - Use the axios (https://github.com/axios/axios) request library to make an API call to the OpenWeatherMap
+         *   API for Current Weather Data using this API key:  25e989bd41e3e24ce13173d8126e0fd6
+         *   We've already imported this library to get you started.
+         * - Use either async/await or Promises.
+         * - Get the weather for Brentwood, TN, and write it to the DOM using the `setResults` method below.  Be
+         *   creative and make it look nice.
+         * - Handle errors and use the `setError` method below to display the error.  Also make it look nice.
+         * - If you find any mistakes in the test, fix them, and leave a comment about what you fixed and why.
+         * - Make sure your code is readable and maintainable.
+         * - Use plenty of descriptive comments.
+         * - Make sure your code runs in the latest version of Google Chrome and Firefox (ES6 is allowed).
+         * - Make your code live (GitHub with GitHub pages works nice).
+         * - Send a link to your finished test to dev-team-jobs@freightwisellc.com.
+         *
+         * Feel free to add your own twist to it (completely optional).  Here are a few ideas:
+         * - Sign up for NewsAPI.org and get the Top Headlines and show them along with the weather.
+         * - Use the browser location API to get the user's current location, and show that location's weather.
+         * - Show a satellite map of the weather in Brentwood.
+         * - Request a user's phone number and send them an SMS with the weather.
+         */
+
+        class Test {
+            constructor() {
+                //  The function getElementsByClassName returns a list of nodes
+                //  We should use `id` instead of `class` to target a DOM node
+                this.weatherResults = document.getElementById('weather-results');
+                this.newsResults = document.getElementById('news-results');
+                this.weatherAPI = new WeatherAPI();
+                this.newsAPI = new NewsAPI();
+            }
+
+            async run(isLocal) {
+                console.log(new Date().toISOString(), '[Test]', 'Running the test');
+                // TODO: Make the API call and handle the results
+                let geoData = null;
+                if (isLocal) {
+                    try {
+                        geoData = await this.weatherAPI.getGeoLocation();
+                    } catch (e) {}
+                }
+
+                let weather = null;
+                try {
+                    weather = await this.weatherAPI.getCurrentWeather(geoData || {
+                        q: 'Brentwood,CA'
+                    });
+                    this.setResults(weather, 'weather');
+                } catch (e) {
+                    this.setError(e.message, 'weather');
+                }
+
+                try {
+                    const topHeadlines = await this.newsAPI.getTopHeadlines({
+                        country: weather ? weather.sys.country : 'us'
+                    });
+                    this.setResults(topHeadlines, 'news');
+                } catch (e) {
+                    this.setError(e.message, 'news');
+                }
+            }
+
+            setError(message, type) {
+                // TODO: Format the error
+                if (type === 'weather') {
+                    this.weatherResults.innerHTML = templates.errorCard(message);
+                } else if (type === 'news') {
+                    this.newsResults.innerHTML = templates.errorCard(message);
+                }
+            }
+
+            setResults(results, type) {
+                // TODO: Format the results
+                if (type === 'weather') {
+                    this.weatherResults.innerHTML = weatherTemplates.weatherCard(results);
+                } else if (type === 'news') {
+                    this.newsResults.innerHTML = newsTemplates.newsList(results);
+                }
+            }
+        }
+    </script>
+
+    <link href="./styles.css" type="text/css" rel="stylesheet" />
+    <link href="./weather/styles.css" type="text/css" rel="stylesheet" />
+    <link href="./news/styles.css" type="text/css" rel="stylesheet" />
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="./utils/api.js"></script>
+    <script src="./utils/constants.js"></script>
+    <script src="./utils/helpers.js"></script>
+    <script src="./utils/templates.js"></script>
+    <script src="./weather/WeatherAPI.js"></script>
+    <script src="./weather/templates.js"></script>
+    <script src="./news/NewsAPI.js"></script>
+    <script src="./news/templates.js"></script>
+</head>
+
+<body>
+    <div class="button-container"></div>
+    <div id="test-results">
+        <div id="weather-results"></div>
+        <div id="news-results"></div>
+    </div>
+
+    <script>
+        'use strict';
+
+        /**
+         * Creates a button for kicking off the test and adds it to the DOM.
+         *
+         * @param {HTMLElement} context  the parent element to add the button to
+         * @param {Test}        test     the test to be executed
+         * @returns {HTMLElement} the button added to the test
+         */
+        function addButtonForTest(context, test) {
+            // Button for showing the Brentwood Weather
+            let testButton = document.createElement('button');
+            testButton.type = 'button';
+            testButton.innerText = 'Get the Nashville Weather';
+            testButton.onclick = () => test.run();
+            context.appendChild(testButton);
+
+            // Button for asking the user for the location and showing the location's weather
+            // Pass "true" flag in the run() function to ask user's location
+            let geoButton = document.createElement('button');
+            geoButton.type = 'button';
+            geoButton.innerText = 'Get the Local Weather';
+            geoButton.onclick = () => test.run(true);
+            context.appendChild(geoButton);
+        }
+
+        // Create the Test and add a button to the UI for running the test
+        const test = new Test();
+        const buttonContainer = document.getElementsByClassName('button-container')[0];
+
+        addButtonForTest(buttonContainer, test);
+    </script>
+</body>
+
+</html>

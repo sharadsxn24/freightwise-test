@@ -1,0 +1,41 @@
+.news-card__figure img {
+  width: 180px;
+}
+
+.news-card {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+.news-card__figure {
+  margin: 0;
+  width: 200px;
+}
+
+.news-card__figure img {
+  width: 200px;
+}
+
+.news-card__info {
+  margin-left: 20px;
+  flex: 1;
+}
+
+.news-card__info h3 {
+  font-size: 1.2rem;
+  margin: 0 0 10px;
+}
+
+.news-card__info small {
+  color: #888;
+}
+
+#news-results h1 {
+  font-size: 2rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #ddd;
+}
+.news-card__info p {
+  margin: 0.5rem 0;
+}
