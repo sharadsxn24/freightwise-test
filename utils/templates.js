@@ -1,3 +1,6 @@
+/**
+ * HTML Template to show the error message in the card format
+ */
 const templates = {
   errorCard(message) {
     return (`

@@ -52,7 +52,7 @@
 
         class Test {
             constructor() {
-                //  The function getElementsByClassName returns a list of nodes
+                //  Fix: The function getElementsByClassName returns a list of nodes
                 //  We should use `id` instead of `class` to target a DOM node
                 this.weatherResults = document.getElementById('weather-results');
                 this.newsResults = document.getElementById('news-results');
@@ -64,12 +64,14 @@
                 console.log(new Date().toISOString(), '[Test]', 'Running the test');
                 // TODO: Make the API call and handle the results
                 let geoData = null;
+                // Ask the user for geolocation data and fail silently if any error
                 if (isLocal) {
                     try {
                         geoData = await this.weatherAPI.getGeoLocation();
                     } catch (e) {}
                 }
 
+                // Get the weather data of user's location or Brentwood by default
                 let weather = null;
                 try {
                     weather = await this.weatherAPI.getCurrentWeather(geoData || {
@@ -80,6 +82,8 @@
                     this.setError(e.message, 'weather');
                 }
 
+                // Use the location info from the weather API result to fetch 
+                // the top headlines for the user's country.
                 try {
                     const topHeadlines = await this.newsAPI.getTopHeadlines({
                         country: weather ? weather.sys.country : 'us'
@@ -92,6 +96,7 @@
 
             setError(message, type) {
                 // TODO: Format the error
+                // Show the corresponding cards for the Weather or News error message
                 if (type === 'weather') {
                     this.weatherResults.innerHTML = templates.errorCard(message);
                 } else if (type === 'news') {
@@ -101,6 +106,7 @@
 
             setResults(results, type) {
                 // TODO: Format the results
+                // Show the corresponding cards for the Weather or News search results
                 if (type === 'weather') {
                     this.weatherResults.innerHTML = weatherTemplates.weatherCard(results);
                 } else if (type === 'news') {

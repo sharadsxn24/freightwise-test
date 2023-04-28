@@ -1,3 +1,7 @@
+/**
+ * HTML Template to show the weather details in the card format
+ */
+
 const weatherTemplates = {
 
   weatherCard({ coord, weather, main, visibility, wind, name, sys }) {

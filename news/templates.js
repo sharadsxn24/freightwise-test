@@ -1,3 +1,6 @@
+/**
+ * HTML Template to show the news top headlines in the card format
+ */
 const newsTemplates = {
   newsList(items) {
     return (`
